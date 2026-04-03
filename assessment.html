@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthy Exposure — Home Assessment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #1B4332;
+      --green-dark: #2D5A3D;
+      --green-spring: #4A7C59;
+      --gold: #C8A84E;
+      --gold-light: #E8D48B;
+      --gold-accent: #D4A843;
+      --brown-deep: #5C3D2E;
+      --brown-warm: #8B5E3C;
+      --cream: #FAF8F5;
+      --cream-dark: #F0EBE3;
+      --charcoal: #2D2D2D;
+      --white-soft: rgba(255,255,255,0.95);
+      --red-soft: #C0392B;
+      --orange-soft: #E67E22;
+      --blue-soft: #2980B9;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Nunito Sans', sans-serif;
+      background: var(--cream);
+      color: var(--charcoal);
+      min-height: 100vh;
+    }
+    h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--forest), var(--green-dark));
+      color: var(--white-soft);
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header h1 { font-size: 1.5rem; letter-spacing: 1px; }
+    .header .subtitle { font-size: 0.8rem; opacity: 0.8; margin-top: 2px; }
+    .progress-badge {
+      background: var(--gold-accent);
+      color: var(--brown-deep);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    /* Whole-Home Progress */
+    .home-progress {
+      background: var(--cream-dark);
+      padding: 10px 24px;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 62px;
+      z-index: 99;
+    }
+    .progress-track {
+      background: #ddd;
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, var(--green-spring), var(--gold-accent));
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--brown-warm);
+      margin-top: 5px;
+    }
+
+    /* Card Grid */
+    .grid-screen {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+    .grid-intro {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .grid-intro h2 { font-size: 1.8rem; color: var(--forest); margin-bottom: 6px; }
+    .grid-intro p { color: var(--brown-warm); font-size: 0.95rem; max-width: 600px; margin: 0 auto; }
+
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .area-card {
+      background: var(--white-soft);
+      border: 2px solid var(--cream-dark);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .area-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .area-card.complete { border-color: var(--green-spring); }
+    .area-card.partial { border-color: var(--gold-accent); }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .area-card h4 {
+      font-size: 1.1rem;
+      color: var(--forest);
+      margin-bottom: 4px;
+    }
+    .card-desc {
+      font-size: 0.78rem;
+      color: var(--brown-warm);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .card-progress {
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .card-progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--green-spring);
+      transition: width 0.4s ease;
+    }
+    .card-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .card-status.complete { color: var(--green-spring); }
+    .card-status.partial { color: var(--gold-accent); }
+    .card-status.pending { color: var(--brown-warm); }
+
+    /* Assessment Screen */
+    .assess-screen {
+      max-width: 720px;
+      margin: 24px auto;
+      padding: 0 20px;
+      display: none;
+    }
+
+    /* Back button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--green-spring);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-bottom: 16px;
+      padding: 6px 0;
+    }
+    .back-btn:hover { color: var(--forest); }
+
+    /* Area Header */
+    .area-header {
+      background: linear-gradient(135deg, var(--forest), var(--green-dark));
+      color: var(--white-soft);
+      padding: 24px;
+      border-radius: 12px 12px 0 0;
+    }
+    .area-header h2 { font-size: 1.5rem; margin-bottom: 4px; }
+    .area-header p { font-size: 0.85rem; opacity: 0.85; }
+
+    /* Sub-area progress */
+    .subarea-progress {
+      background: var(--cream-dark);
+      padding: 10px 24px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ddd;
+    }
+    .subarea-pip {
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid var(--cream-dark);
+      background: white;
+      color: var(--brown-warm);
+      transition: all 0.2s;
+    }
+    .subarea-pip.active { border-color: var(--gold-accent); background: var(--gold-light); color: var(--brown-deep); }
+    .subarea-pip.done { border-color: var(--green-spring); background: #e0f0e0; color: var(--green-spring); }
+
+    /* Question Card */
+    .question-card {
+      background: var(--white-soft);
+      border: 2px solid var(--gold-accent);
+      border-radius: 0 0 12px 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .question-body { padding: 24px; }
+
+    .q-label {
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--brown-warm);
+      margin-bottom: 8px;
+    }
+    .q-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: var(--brown-deep);
+      margin-bottom: 16px;
+    }
+
+    /* Answer options */
+    .answer-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .answer-opt {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 2px solid var(--cream-dark);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .answer-opt:hover { border-color: var(--gold); background: #faf6eb; }
+    .answer-opt.selected { border-color: var(--green-spring); background: #eef5e9; }
+    .answer-opt.risk-high.selected { border-color: var(--red-soft); background: #fde8e8; }
+    .answer-opt.risk-med.selected { border-color: var(--orange-soft); background: #fef3e0; }
+    .answer-opt input { display: none; }
+    .opt-marker {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--cream-dark);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem; color: var(--brown-deep); flex-shrink: 0;
+    }
+    .answer-opt.selected .opt-marker { background: var(--green-spring); color: white; }
+    .answer-opt.risk-high.selected .opt-marker { background: var(--red-soft); }
+    .answer-opt.risk-med.selected .opt-marker { background: var(--orange-soft); }
+    .opt-text { font-size: 0.92rem; }
+
+    /* Toxin Education Callout */
+    .toxin-callout {
+      background: linear-gradient(to right, #fdf8ec, #faf6eb);
+      border-left: 4px solid var(--gold-accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      display: none;
+    }
+    .toxin-callout.visible { display: block; }
+    .toxin-callout .tc-title {
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      color: var(--gold-accent);
+      margin-bottom: 6px;
+    }
+    .toxin-callout .tc-body {
+      font-size: 0.88rem;
+      color: var(--brown-deep);
+      line-height: 1.6;
+    }
+    .toxin-callout .tc-eiv {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--green-spring);
+      font-weight: 600;
+    }
+
+    /* Custom Concern */
+    .custom-concern {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--cream-dark);
+    }
+    .custom-concern label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--brown-warm);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .custom-concern textarea {
+      width: 100%;
+      min-height: 60px;
+      padding: 10px;
+      border: 2px solid var(--cream-dark);
+      border-radius: 8px;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.9rem;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+    .custom-concern textarea:focus { outline: none; border-color: var(--green-spring); }
+
+    /* Navigation */
+    .q-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--cream-dark);
+    }
+    .nav-btn {
+      padding: 11px 26px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+    .nav-btn.prev { background: white; color: var(--brown-deep); border: 2px solid var(--cream-dark); }
+    .nav-btn.prev:hover { border-color: var(--brown-warm); }
+    .nav-btn.next { background: var(--forest); color: white; }
+    .nav-btn.next:hover { background: var(--green-dark); }
+    .nav-btn:disabled { opacity: 0.4; cursor: default; }
+    .save-indicator { font-size: 0.78rem; color: var(--green-spring); font-weight: 600; }
+
+    /* Results Screen */
+    .results-screen {
+      max-width: 800px;
+      margin: 24px auto;
+      padding: 0 20px;
+      display: none;
+    }
+    .results-header {
+      background: linear-gradient(135deg, var(--forest), var(--green-dark));
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .results-header h2 { font-size: 2rem; margin-bottom: 8px; }
+
+    .score-ring {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 8px solid var(--gold-accent);
+      display: flex; align-items: center; justify-content: center;
+      margin: 16px auto;
+      flex-direction: column;
+    }
+    .score-ring .score-val { font-size: 2.4rem; font-weight: 700; font-family: 'Cormorant Garamond', serif; }
+    .score-ring .score-label { font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; }
+
+    .area-result {
+      background: var(--white-soft);
+      border: 2px solid var(--cream-dark);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    .area-result.risk-high { border-left: 5px solid var(--red-soft); }
+    .area-result.risk-med { border-left: 5px solid var(--orange-soft); }
+    .area-result.risk-low { border-left: 5px solid var(--green-spring); }
+
+    .ar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .ar-header h4 { font-size: 1.1rem; color: var(--forest); }
+    .ar-score {
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+    .ar-score.high { background: #fde8e8; color: var(--red-soft); }
+    .ar-score.med { background: #fef3e0; color: var(--orange-soft); }
+    .ar-score.low { background: #e0f0e0; color: var(--green-spring); }
+
+    .ar-findings { font-size: 0.88rem; color: var(--brown-deep); line-height: 1.5; }
+    .ar-action {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--forest);
+      font-weight: 600;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .action-btn.primary { background: var(--forest); color: white; }
+    .action-btn.primary:hover { background: var(--green-dark); }
+    .action-btn.secondary { background: white; color: var(--forest); border: 2px solid var(--forest); }
+    .action-btn.secondary:hover { background: var(--cream-dark); }
+
+    /* Disclaimer */
+    .disclaimer {
+      background: var(--cream-dark);
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: var(--brown-warm);
+      line-height: 1.5;
+      margin: 24px 0;
+    }
+
+    @media (max-width: 600px) {
+      .header { flex-direction: column; gap: 8px; text-align: center; padding: 14px 16px; }
+      .area-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+      .area-card { padding: 14px; }
+      .card-icon { font-size: 1.6rem; }
+      .results-actions { flex-direction: column; }
+      .action-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <a href="index.html" style="color:inherit;text-decoration:none;"><h1>Healthy Exposure</h1></a>
+      <div class="subtitle">Digital Home Assessment — Eliminate, Isolate, Ventilate</div>
+    </div>
+    <div class="progress-badge" id="homeBadge">0 / 15 Areas</div>
+  </div>
+
+  <!-- Whole-Home Progress -->
+  <div class="home-progress">
+    <div class="progress-track">
+      <div class="progress-fill" id="homeProgressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-text">
+      <span id="homeProgressLabel">Select an area to begin your assessment</span>
+      <span id="homeProgressPct">0%</span>
+    </div>
+  </div>
+
+  <!-- Grid Screen -->
+  <div class="grid-screen" id="gridScreen">
+    <div class="grid-intro">
+      <h2>Your Home Assessment</h2>
+      <p>Walk through each area of your home. We'll help you identify environmental health risks and give you a clear action plan based on the EIV method.</p>
+    </div>
+    <div class="area-grid" id="areaGrid"></div>
+  </div>
+
+  <!-- Assessment Screen -->
+  <div class="assess-screen" id="assessScreen">
+    <button class="back-btn" id="backBtn">&larr; Back to all areas</button>
+    <div class="area-header" id="areaHeader">
+      <h2 id="areaTitle"></h2>
+      <p id="areaDesc"></p>
+    </div>
+    <div class="subarea-progress" id="subareaNav"></div>
+    <div class="question-card">
+      <div class="question-body" id="questionBody"></div>
+      <div class="q-nav">
+        <button class="nav-btn prev" id="prevBtn" disabled>&larr; Previous</button>
+        <span class="save-indicator" id="saveIndicator"></span>
+        <button class="nav-btn next" id="nextBtn">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div class="results-screen" id="resultsScreen"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ================================================================
+  // ASSESSMENT DATA — 15 home areas, each with sub-areas and questions
+  // Toxin education from "Environmental Health by Healthy Exposure"
+  // by Capt. Darren J. Vigil, CIEC, ATP
+  // ================================================================
+
+  var AREAS = [
+    {
+      id: 'attic', icon: '🏚️', title: 'Attic',
+      desc: 'Where temperature extremes, moisture, and air movement converge.',
+      subareas: [
+        {
+          id: 'ventilation', label: 'Ventilation',
+          questions: [
+            {
+              text: 'Does your attic have functional soffit vents (intake) AND ridge/gable vents (exhaust)?',
+              options: [
+                { text: 'Yes — both intake and exhaust vents are present and unblocked', score: 0, risk: 'low' },
+                { text: 'Partial — some vents present but unsure if all are functional', score: 1, risk: 'med' },
+                { text: 'No — missing intake or exhaust vents, or they appear blocked', score: 2, risk: 'high' },
+                { text: 'I don\'t know / haven\'t checked', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Why Attic Ventilation Matters',
+                body: 'Proper attic ventilation requires balanced intake (soffit) and exhaust (ridge/gable). The rule: 1 sq ft of venting per 150 sq ft of attic floor. Without it, moisture from inside your home rises and condenses on cold surfaces — creating ideal mold conditions.',
+                eiv: 'EIV: Ventilate — fresh air movement prevents moisture buildup and mold.'
+              }
+            },
+            {
+              text: 'In summer, does your upstairs feel significantly hotter than downstairs?',
+              options: [
+                { text: 'No — temperature is comfortable and even throughout', score: 0, risk: 'low' },
+                { text: 'Somewhat — a few degrees warmer upstairs', score: 1, risk: 'med' },
+                { text: 'Yes — noticeably hotter, uncomfortable', score: 2, risk: 'high' },
+                { text: 'Not applicable / single story', score: 0, risk: 'low' }
+              ],
+              education: {
+                title: 'Attic Heat Transfer',
+                body: 'Attic temperatures can exceed 150°F in summer, radiating heat downward into living spaces. Poor ventilation and insulation make this worse — and excessive heat accelerates off-gassing from building materials.',
+                eiv: 'EIV: Ventilate + Isolate — proper ventilation removes hot air; insulation isolates living space.'
+              }
+            }
+          ]
+        },
+        {
+          id: 'moisture', label: 'Moisture & Mold',
+          questions: [
+            {
+              text: 'Have you noticed any dark staining on the underside of the roof sheathing or attic framing?',
+              options: [
+                { text: 'No staining visible', score: 0, risk: 'low' },
+                { text: 'Minor discoloration in a small area', score: 1, risk: 'med' },
+                { text: 'Visible dark stains or suspected mold on framing', score: 2, risk: 'high' },
+                { text: 'I haven\'t inspected my attic', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Hidden Attic Mold',
+                body: 'The first sign of a roof leak is often NOT water dripping inside — it\'s mold in the attic or dark water staining on sheathing. Colonies can cover up to 50% of framing before anyone notices. Mold spores are then drawn down into living spaces by HVAC systems.',
+                eiv: 'EIV: Eliminate the moisture source (fix leak), then remediate mold growth.'
+              }
+            },
+            {
+              text: 'Is insulation in your attic dry and evenly distributed, or do you see compressed/wet areas?',
+              options: [
+                { text: 'Dry and even — looks well-maintained', score: 0, risk: 'low' },
+                { text: 'Some uneven spots but appears mostly dry', score: 1, risk: 'med' },
+                { text: 'Wet, compressed, or displaced insulation visible', score: 2, risk: 'high' },
+                { text: 'I haven\'t checked', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Insulation & Off-Gassing',
+                body: 'Many fiberglass insulation products are treated with formaldehyde binders that off-gas — especially when heated. Wet insulation loses R-value and breeds mold. Compressed insulation creates thermal bridges.',
+                eiv: 'EIV: Eliminate damaged insulation; Isolate with proper vapor barriers; Ventilate the attic space.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'roof', icon: '🏠', title: 'Roof & Exterior',
+      desc: 'Your first defense against water intrusion.',
+      subareas: [
+        {
+          id: 'integrity', label: 'Roof Integrity',
+          questions: [
+            {
+              text: 'How old is your current roof covering?',
+              options: [
+                { text: 'Less than 10 years old', score: 0, risk: 'low' },
+                { text: '10-20 years old', score: 1, risk: 'med' },
+                { text: 'Over 20 years old or unknown', score: 2, risk: 'high' },
+                { text: 'Recently replaced / I don\'t know', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Roof Age & Water Intrusion',
+                body: 'Aging roofs develop deteriorated flashing, cracked sealant, and worn shingles — all entry points for water. Water enters at roof penetrations (pipes, vents, chimneys, skylights) and contaminates attic framing with mold, which HVAC then distributes.',
+                eiv: 'EIV: Eliminate water entry by maintaining the roof envelope.'
+              }
+            },
+            {
+              text: 'Do you have gutters, and are they functional with downspouts directing water away from the foundation?',
+              options: [
+                { text: 'Yes — gutters are clean and downspouts direct water 4+ feet from foundation', score: 0, risk: 'low' },
+                { text: 'Gutters present but may need cleaning or repair', score: 1, risk: 'med' },
+                { text: 'No gutters, or gutters are clogged/damaged', score: 2, risk: 'high' },
+                { text: 'I\'m unsure', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Drainage & Foundation Protection',
+                body: 'The first line of defense against basement moisture is external drainage — functional gutters, downspouts directing water away, and grading that slopes away from the foundation. Failed drainage is the #1 cause of wet basements.',
+                eiv: 'EIV: Eliminate water contact with the foundation through proper drainage.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'walls', icon: '🧱', title: 'Exterior Walls',
+      desc: 'The building envelope between indoor and outdoor environments.',
+      subareas: [
+        {
+          id: 'envelope', label: 'Building Envelope',
+          questions: [
+            {
+              text: 'Do you see any cracks, gaps, or deteriorated caulk around windows, doors, or where siding meets trim?',
+              options: [
+                { text: 'No — caulk and sealants look intact', score: 0, risk: 'low' },
+                { text: 'Minor gaps in a few spots', score: 1, risk: 'med' },
+                { text: 'Multiple areas with cracked/missing caulk or visible gaps', score: 2, risk: 'high' },
+                { text: 'I haven\'t inspected closely', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Water Entry Through Walls',
+                body: 'Water enters walls through cracks in siding, gaps at window/door junctions, utility penetrations, and deteriorated caulk. Hidden mold behind siding is a major health risk — wall cavities are dark, warm, and often damp.',
+                eiv: 'EIV: Eliminate water entry points; Isolate with proper water-resistive barrier behind siding.'
+              }
+            },
+            {
+              text: 'Do you know if your wall insulation has a vapor barrier, and if it\'s on the correct side for your climate?',
+              options: [
+                { text: 'Yes — vapor barrier is on the warm side (interior in cold climates)', score: 0, risk: 'low' },
+                { text: 'I believe there\'s a vapor barrier but unsure of placement', score: 1, risk: 'med' },
+                { text: 'No vapor barrier, or it may be on the wrong side', score: 2, risk: 'high' },
+                { text: 'I don\'t know', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Vapor Barrier Placement',
+                body: 'The vapor barrier must always be on the WARM side — interior in cold climates, exterior in hot/humid climates. A backwards vapor barrier traps moisture inside the wall cavity, creating hidden mold. This is one of the most common and dangerous construction errors.',
+                eiv: 'EIV: Isolate — proper vapor barrier placement prevents condensation inside walls.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'foundation', icon: '🔨', title: 'Foundation & Crawlspace',
+      desc: 'Where earth contacts your home and radon enters.',
+      subareas: [
+        {
+          id: 'moisture', label: 'Moisture & Water',
+          questions: [
+            {
+              text: 'Have you ever noticed water, dampness, or white mineral deposits (efflorescence) on your basement walls or floor?',
+              options: [
+                { text: 'No — basement stays consistently dry', score: 0, risk: 'low' },
+                { text: 'Occasional dampness or minor efflorescence', score: 1, risk: 'med' },
+                { text: 'Recurring water, visible efflorescence, or musty smell', score: 2, risk: 'high' },
+                { text: 'I don\'t have a basement / haven\'t checked', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Basement Moisture & Efflorescence',
+                body: 'Efflorescence (white mineral deposits) on concrete = water is migrating through your foundation. Water enters basements through foundation cracks, porous concrete, floor-to-wall joints, utility gaps, and sump pits. Mold in basements is nearly universal in moisture-affected homes.',
+                eiv: 'EIV: Eliminate water sources; Isolate with vapor barriers and sealants; Ventilate with dehumidification.'
+              }
+            },
+            {
+              text: 'If you have a crawl space, is the soil covered with a vapor barrier?',
+              options: [
+                { text: 'Yes — sealed vapor barrier covering all soil', score: 0, risk: 'low' },
+                { text: 'Partial coverage or barrier has gaps/tears', score: 1, risk: 'med' },
+                { text: 'No vapor barrier — exposed soil', score: 2, risk: 'high' },
+                { text: 'No crawl space / I can\'t access it', score: 0, risk: 'low' }
+              ],
+              education: {
+                title: 'Crawl Space Moisture',
+                body: 'Exposed soil in a crawl space constantly releases moisture and soil gases (including radon) into your home via the stack effect. A sealed vapor barrier is essential. ATP readings in uncovered crawl spaces consistently show heavy microbial contamination.',
+                eiv: 'EIV: Isolate soil from living space with sealed vapor barrier + dehumidification.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'basement', icon: '🪜', title: 'Basement',
+      desc: 'Where the stack effect begins drawing air upward into your home.',
+      subareas: [
+        {
+          id: 'airquality', label: 'Air Quality',
+          questions: [
+            {
+              text: 'Does your basement have a musty or earthy smell?',
+              options: [
+                { text: 'No — smells clean and dry', score: 0, risk: 'low' },
+                { text: 'Slightly musty occasionally', score: 1, risk: 'med' },
+                { text: 'Consistently musty or earthy smelling', score: 2, risk: 'high' },
+                { text: 'I rarely go down there', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Basement Air & the Stack Effect',
+                body: 'The stack effect draws air upward from the lowest point of your home. On a winter day (10°F outside, 70°F inside), the 60-degree temperature difference creates pressure differentials that pull basement air — including mold spores, radon, and VOCs — up through every floor.',
+                eiv: 'EIV: Eliminate mold sources; Isolate basement air from living space; Ventilate with fresh air.'
+              }
+            },
+            {
+              text: 'Has your home been tested for radon?',
+              options: [
+                { text: 'Yes — tested below 4 pCi/L (EPA action level)', score: 0, risk: 'low' },
+                { text: 'Tested but unsure of the results', score: 1, risk: 'med' },
+                { text: 'Never tested for radon', score: 2, risk: 'high' },
+                { text: 'Tested above 4 pCi/L and not yet mitigated', score: 2, risk: 'high' }
+              ],
+              education: {
+                title: 'Radon — Invisible & Odorless',
+                body: 'Radon is a radioactive gas from soil that accumulates in basements and is the second leading cause of lung cancer. It enters through foundation cracks, floor-to-wall joints, and sump pits. Testing is the ONLY way to know your level — you cannot see or smell it.',
+                eiv: 'EIV: Ventilate — sub-slab depressurization systems draw radon out before it enters.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'hvac', icon: '🌀', title: 'HVAC System',
+      desc: 'The lungs of your home — distributing air (and contaminants) everywhere.',
+      subareas: [
+        {
+          id: 'filtration', label: 'Filtration & Maintenance',
+          questions: [
+            {
+              text: 'What MERV rating is your HVAC filter, and how often do you change it?',
+              options: [
+                { text: 'MERV 11-13 filter, changed every 1-3 months', score: 0, risk: 'low' },
+                { text: 'Not sure of MERV rating, but I change it regularly', score: 1, risk: 'med' },
+                { text: 'Basic filter (MERV 4-8) or rarely changed', score: 2, risk: 'high' },
+                { text: 'I don\'t know what filter I have', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'HVAC Filtration',
+                body: 'A MERV 4 filter only catches large dust — mold spores, fine particulates, and allergens pass right through. MERV 11-13 is recommended for residential use. A caked, dirty filter reduces airflow and forces contaminants back into your air supply.',
+                eiv: 'EIV: Isolate contaminants with proper filtration (MERV 11-13).'
+              }
+            },
+            {
+              text: 'When were your HVAC ducts last professionally cleaned?',
+              options: [
+                { text: 'Within the last 3 years', score: 0, risk: 'low' },
+                { text: '3-5 years ago', score: 1, risk: 'med' },
+                { text: 'Never, or more than 5 years ago', score: 2, risk: 'high' },
+                { text: 'I\'m not sure', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Duct Contamination',
+                body: 'Mold grows on evaporator coils, inside ductwork, and in drain pans. Dust and biofilm accumulate over time, reducing airflow and contaminating every room your HVAC serves. One contaminated case study showed particulate levels 3x normal with a caked MERV 4 filter.',
+                eiv: 'EIV: Eliminate biofilm and mold from ducts; upgrade filtration; ensure drain pans are clear.'
+              }
+            }
+          ]
+        },
+        {
+          id: 'combustion', label: 'Combustion Safety',
+          questions: [
+            {
+              text: 'Do you have carbon monoxide detectors on every level of your home?',
+              options: [
+                { text: 'Yes — CO detectors on every level, tested recently', score: 0, risk: 'low' },
+                { text: 'Some CO detectors but not on every level', score: 1, risk: 'med' },
+                { text: 'No CO detectors, or batteries may be dead', score: 2, risk: 'high' },
+                { text: 'I\'m not sure', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Carbon Monoxide — The Silent Killer',
+                body: 'Cracked heat exchangers in furnaces can release CO into your air supply. One documented case: 35 ppm CO (EPA action level is 9 ppm) caused cognitive decline, memory loss, and slower responses — mimicking early dementia. The homeowner had no idea until testing.',
+                eiv: 'EIV: Eliminate CO sources (repair/replace furnace); Ventilate with fresh air exchange.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'kitchen', icon: '🍳', title: 'Kitchen',
+      desc: 'Formaldehyde from cabinets, combustion from gas ranges, moisture from cooking.',
+      subareas: [
+        {
+          id: 'cabinets', label: 'Cabinets & Materials',
+          questions: [
+            {
+              text: 'Were your kitchen cabinets installed in the last 5 years, and do you know if they\'re solid wood or composite?',
+              options: [
+                { text: 'Solid wood or formaldehyde-free composite', score: 0, risk: 'low' },
+                { text: 'Standard composite / particleboard, installed 5+ years ago', score: 1, risk: 'med' },
+                { text: 'New composite cabinets (installed within 2 years)', score: 2, risk: 'high' },
+                { text: 'I don\'t know the material', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Formaldehyde in Cabinets',
+                body: 'New composite cabinets use urea-formaldehyde binders. One documented case showed formaldehyde at 2.1 ppm — that\'s 21 TIMES the EPA reference concentration of 0.1 ppm. Symptoms: headaches, fatigue, respiratory/eye irritation, cognitive difficulties. Off-gassing decreases over months but never fully stops.',
+                eiv: 'EIV: Eliminate by choosing formaldehyde-free materials; Isolate by sealing with polyurethane/shellac.'
+              }
+            }
+          ]
+        },
+        {
+          id: 'cooking', label: 'Cooking & Ventilation',
+          questions: [
+            {
+              text: 'Do you have a gas range, and does your range hood vent to the outdoors?',
+              options: [
+                { text: 'Electric range, or gas with outdoor-venting hood', score: 0, risk: 'low' },
+                { text: 'Gas range with recirculating hood (filters, doesn\'t vent outside)', score: 1, risk: 'med' },
+                { text: 'Gas range with no hood or non-functional hood', score: 2, risk: 'high' },
+                { text: 'I\'m not sure if my hood vents outside', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Gas Range Combustion',
+                body: 'Gas ranges produce carbon monoxide, nitrogen dioxide, and fine particulates during combustion. These MUST be vented outdoors — a recirculating hood only filters grease, not combustion byproducts. Cooking steam also adds moisture that promotes mold if not exhausted.',
+                eiv: 'EIV: Ventilate — always vent combustion byproducts and cooking moisture outdoors.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'bathroom', icon: '🚿', title: 'Bathroom',
+      desc: 'Primary moisture source — shower steam promotes mold if not exhausted.',
+      subareas: [
+        {
+          id: 'moisture', label: 'Moisture Control',
+          questions: [
+            {
+              text: 'Does your bathroom have a working exhaust fan, and do you run it during and after showers?',
+              options: [
+                { text: 'Yes — fan runs during showers and for 30+ minutes after', score: 0, risk: 'low' },
+                { text: 'Fan present but only run during shower, not after', score: 1, risk: 'med' },
+                { text: 'No exhaust fan, or fan is broken/noisy/not used', score: 2, risk: 'high' },
+                { text: 'I open a window instead', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Bathroom Moisture & Mold',
+                body: 'The bathroom is the #1 moisture source in most homes. Exhaust fans should run DURING showers and for 30 minutes AFTER to remove moisture. Without proper exhaust, shower steam condenses on walls and ceilings — mold can establish within 24-48 hours on damp surfaces.',
+                eiv: 'EIV: Ventilate — exhaust fans are your primary defense against bathroom mold.'
+              }
+            },
+            {
+              text: 'Do you see any mold, mildew, or dark spots on bathroom caulk, grout, ceiling, or around the fan?',
+              options: [
+                { text: 'No visible mold or discoloration', score: 0, risk: 'low' },
+                { text: 'Minor mildew on grout/caulk', score: 1, risk: 'med' },
+                { text: 'Visible mold on ceiling, walls, or persistent mildew on caulk', score: 2, risk: 'high' },
+                { text: 'I haven\'t looked closely', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Visible Mold = Tip of the Iceberg',
+                body: 'Visible bathroom mold is usually a surface indicator of a larger moisture problem. Mold behind tiles, inside walls, and around leaking fixtures can be far more extensive than what\'s visible. Surface mold on caulk can be cleaned, but recurring growth means the moisture source isn\'t controlled.',
+                eiv: 'EIV: Eliminate moisture source first, then remove mold. Don\'t just clean the surface.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'bedroom', icon: '🛏️', title: 'Bedroom',
+      desc: 'Where you spend 8 hours breathing — allergens, VOCs, and CO2 matter most here.',
+      subareas: [
+        {
+          id: 'airquality', label: 'Air Quality & Allergens',
+          questions: [
+            {
+              text: 'Do you use allergen-proof covers on your mattress and pillows?',
+              options: [
+                { text: 'Yes — certified allergen-proof encasements on mattress and pillows', score: 0, risk: 'low' },
+                { text: 'On some but not all', score: 1, risk: 'med' },
+                { text: 'No allergen covers', score: 2, risk: 'high' },
+                { text: 'I didn\'t know those existed', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Dust Mites & Bedroom Allergens',
+                body: 'Dust mites thrive in mattresses, pillows, and bedding — their waste products trigger allergies and asthma. Allergen-proof encasements create a barrier. Combine with weekly hot-water washes (130°F+) to kill mites. Pet dander is another major bedroom trigger.',
+                eiv: 'EIV: Isolate with allergen covers; Eliminate by washing weekly in hot water; keep pets out.'
+              }
+            },
+            {
+              text: 'Do you wake up congested, with a headache, or feeling unrested?',
+              options: [
+                { text: 'No — I wake feeling rested and clear', score: 0, risk: 'low' },
+                { text: 'Occasionally congested or groggy', score: 1, risk: 'med' },
+                { text: 'Regularly wake congested, headachy, or unrested', score: 2, risk: 'high' },
+                { text: 'Only during certain seasons', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Nighttime CO2 & Bedroom Air',
+                body: 'CO2 levels in closed bedrooms can exceed 1,200 ppm overnight — well above the 800-1,000 ppm threshold where cognitive performance drops. Waking congested or unrested often signals poor bedroom air quality: high CO2, allergens, or VOCs from new furniture/carpet.',
+                eiv: 'EIV: Ventilate — crack a door or window; use a HEPA purifier; keep CO2 below 1,000 ppm.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'living', icon: '🛋️', title: 'Living Areas',
+      desc: 'VOCs from furniture, carpet, paint, and everyday products.',
+      subareas: [
+        {
+          id: 'materials', label: 'Materials & Products',
+          questions: [
+            {
+              text: 'Does your living room have wall-to-wall carpet?',
+              options: [
+                { text: 'No — hard flooring (wood, tile, concrete)', score: 0, risk: 'low' },
+                { text: 'Area rugs on hard flooring', score: 0, risk: 'low' },
+                { text: 'Wall-to-wall carpet, installed 5+ years ago', score: 1, risk: 'med' },
+                { text: 'New wall-to-wall carpet (within 2 years)', score: 2, risk: 'high' }
+              ],
+              education: {
+                title: 'Carpet as a Toxin Reservoir',
+                body: 'Carpet traps allergens, dust mites, pet dander, and VOCs. New carpet off-gasses formaldehyde, benzene, and toluene. Hard flooring is always preferred for environmental health — it\'s cleanable, doesn\'t trap contaminants, and doesn\'t off-gas.',
+                eiv: 'EIV: Eliminate carpet where possible; replace with hard flooring.'
+              }
+            },
+            {
+              text: 'Do you use air fresheners, scented candles, or plug-in fragrance products?',
+              options: [
+                { text: 'No — we avoid scented products', score: 0, risk: 'low' },
+                { text: 'Occasionally (a few times per month)', score: 1, risk: 'med' },
+                { text: 'Regularly — candles, plug-ins, or sprays are common in our home', score: 2, risk: 'high' },
+                { text: 'I use essential oil diffusers instead', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Fragrance Products Release VOCs',
+                body: 'Air fresheners, scented candles, and plug-ins release volatile organic compounds including benzene, toluene, and formaldehyde. They don\'t clean the air — they add more chemicals to it. What you no longer smell may still be harming you (chemical adaptation).',
+                eiv: 'EIV: Eliminate fragrance products; Ventilate with fresh air instead of masking odors.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'laundry', icon: '🧺', title: 'Laundry Room',
+      desc: 'Moisture, heat, and dryer exhaust — a hidden risk area.',
+      subareas: [
+        {
+          id: 'venting', label: 'Venting & Moisture',
+          questions: [
+            {
+              text: 'Does your dryer vent to the outdoors through a rigid or semi-rigid duct?',
+              options: [
+                { text: 'Yes — rigid metal duct venting outside, cleaned recently', score: 0, risk: 'low' },
+                { text: 'Flexible foil duct, vents outside', score: 1, risk: 'med' },
+                { text: 'Vents into the house, garage, or I\'m unsure where it goes', score: 2, risk: 'high' },
+                { text: 'I have a ventless/condensing dryer', score: 0, risk: 'low' }
+              ],
+              education: {
+                title: 'Dryer Venting & Indoor Moisture',
+                body: 'A dryer venting indoors dumps moisture, lint, and heat directly into your home — creating mold conditions. Flexible plastic or vinyl ducts are fire hazards and trap lint. Rigid metal duct venting outdoors is the standard. Clean the vent line annually.',
+                eiv: 'EIV: Ventilate — always exhaust dryer air outdoors through rigid ductwork.'
+              }
+            },
+            {
+              text: 'Is there any visible moisture damage, peeling paint, or musty smell in your laundry area?',
+              options: [
+                { text: 'No — area is dry and well-maintained', score: 0, risk: 'low' },
+                { text: 'Minor peeling or slight dampness occasionally', score: 1, risk: 'med' },
+                { text: 'Visible water damage, peeling, or persistent musty smell', score: 2, risk: 'high' },
+                { text: 'I haven\'t checked behind the machines', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Hidden Laundry Room Moisture',
+                body: 'Washing machines and dryers generate significant moisture and heat. Supply line leaks, condensation, and poor ventilation create ideal mold conditions behind appliances. Check behind and under machines regularly — slow leaks are common and often unnoticed.',
+                eiv: 'EIV: Eliminate leaks; Ventilate the laundry area; maintain appliance hoses.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'nursery', icon: '👶', title: 'Nursery / Kids Room',
+      desc: 'Children are more vulnerable — smaller lungs, faster breathing, developing immune systems.',
+      subareas: [
+        {
+          id: 'safety', label: 'Air & Material Safety',
+          questions: [
+            {
+              text: 'Was the nursery recently painted or furnished with new furniture/carpet?',
+              options: [
+                { text: 'No recent changes, or used zero-VOC products', score: 0, risk: 'low' },
+                { text: 'Painted/furnished 6+ months ago with standard products', score: 1, risk: 'med' },
+                { text: 'Recently painted/furnished (within 6 months) with standard products', score: 2, risk: 'high' },
+                { text: 'I\'m not sure what products were used', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Children & Chemical Sensitivity',
+                body: 'Children breathe faster and have developing immune systems, making them more vulnerable to VOCs. New paint, furniture, and carpet off-gas formaldehyde and other VOCs for weeks to months. The concept of "total body burden" means their smaller bodies reach chemical thresholds faster.',
+                eiv: 'EIV: Eliminate VOC sources (zero-VOC paint, solid wood furniture); Ventilate heavily after any installation.'
+              }
+            },
+            {
+              text: 'Does the room have an air purifier with HEPA filtration?',
+              options: [
+                { text: 'Yes — HEPA + carbon air purifier running', score: 0, risk: 'low' },
+                { text: 'Basic air purifier without HEPA', score: 1, risk: 'med' },
+                { text: 'No air purifier', score: 1, risk: 'med' },
+                { text: 'I use an essential oil diffuser / humidifier instead', score: 2, risk: 'high' }
+              ],
+              education: {
+                title: 'Air Purification for Kids',
+                body: 'HEPA + activated carbon purifiers remove both particulates and VOCs. Avoid humidifiers in children\'s rooms unless medically necessary — excess humidity promotes mold and dust mites. Essential oil diffusers add VOCs to the air. Austin Air purifiers are recommended.',
+                eiv: 'EIV: Isolate with HEPA purification; avoid adding moisture to the room.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'garage', icon: '🚗', title: 'Garage',
+      desc: 'Chemical storage, vehicle exhaust, and direct connection to living space.',
+      subareas: [
+        {
+          id: 'contamination', label: 'Chemical & Exhaust',
+          questions: [
+            {
+              text: 'Is your garage attached to your home, and is the shared wall/door properly sealed?',
+              options: [
+                { text: 'Attached, with weather-stripped door and sealed wall penetrations', score: 0, risk: 'low' },
+                { text: 'Attached, but door seal may need replacement', score: 1, risk: 'med' },
+                { text: 'Attached with no seal on door, or visible gaps in shared wall', score: 2, risk: 'high' },
+                { text: 'Detached garage', score: 0, risk: 'low' }
+              ],
+              education: {
+                title: 'Garage-to-Home Air Transfer',
+                body: 'Attached garages are a major source of indoor air contamination. Vehicle exhaust (CO, benzene), stored chemicals (pesticides, paint, solvents), and gasoline vapors migrate into living spaces through unsealed doors, wall penetrations, and shared HVAC returns.',
+                eiv: 'EIV: Isolate garage air from living space — seal all penetrations, weather-strip doors, no shared HVAC returns.'
+              }
+            },
+            {
+              text: 'Do you store pesticides, paint, solvents, or gasoline in the garage?',
+              options: [
+                { text: 'No chemical storage in the garage', score: 0, risk: 'low' },
+                { text: 'A few sealed containers', score: 1, risk: 'med' },
+                { text: 'Multiple chemicals, some open or poorly sealed', score: 2, risk: 'high' },
+                { text: 'I\'m not sure what\'s stored', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Chemical Storage & BTEX Compounds',
+                body: 'BTEX compounds (benzene, toluene, ethylbenzene, xylene) are present in paint, adhesives, solvents, and gasoline. Pesticides should NEVER be sprayed or stored indoors. These chemicals contribute to your total body burden — the cumulative chemical load your body processes.',
+                eiv: 'EIV: Eliminate unnecessary chemicals; Isolate needed ones in sealed containers outside living spaces.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'yard', icon: '🌿', title: 'Yard & Soil',
+      desc: 'Grading, drainage, pesticides, and what comes inside on your shoes.',
+      subareas: [
+        {
+          id: 'drainage', label: 'Drainage & Contaminants',
+          questions: [
+            {
+              text: 'Does the ground around your home slope AWAY from the foundation on all sides?',
+              options: [
+                { text: 'Yes — clear slope away from foundation on all sides', score: 0, risk: 'low' },
+                { text: 'Mostly, but one or two areas may be flat or slope toward the house', score: 1, risk: 'med' },
+                { text: 'Ground slopes toward the foundation in multiple areas', score: 2, risk: 'high' },
+                { text: 'I haven\'t checked', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Grading & Foundation Protection',
+                body: 'Proper grading (ground sloping away from the house) is your first defense against foundation moisture. Water pooling against the foundation migrates through concrete, causing efflorescence, basement dampness, and eventually mold. Grading should slope 6 inches in the first 10 feet.',
+                eiv: 'EIV: Eliminate water contact with foundation through proper grading and drainage.'
+              }
+            },
+            {
+              text: 'Do you or your neighbors apply pesticides/herbicides to lawns, and do you have a shoes-off policy indoors?',
+              options: [
+                { text: 'No lawn chemicals, shoes off at the door', score: 0, risk: 'low' },
+                { text: 'Some lawn treatment but shoes off indoors', score: 1, risk: 'med' },
+                { text: 'Regular lawn chemicals and shoes worn indoors', score: 2, risk: 'high' },
+                { text: 'I\'m not sure what my neighbors apply', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Tracking Outdoor Contaminants Inside',
+                body: 'Shoes track pesticides, herbicides, lead dust, and other outdoor contaminants into your home. Once inside, these settle into carpet and dust where children and pets contact them. A shoes-off policy is one of the simplest and most effective environmental health measures.',
+                eiv: 'EIV: Eliminate by removing shoes at the door; Isolate with entry mats.'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'water', icon: '💧', title: 'Water System',
+      desc: 'PFAS, lead, and contaminants in your drinking and bathing water.',
+      subareas: [
+        {
+          id: 'quality', label: 'Water Quality',
+          questions: [
+            {
+              text: 'Have you tested your home\'s water for PFAS (forever chemicals)?',
+              options: [
+                { text: 'Yes — tested and results were below detection limits', score: 0, risk: 'low' },
+                { text: 'Tested and some PFAS detected, filtration in place', score: 1, risk: 'med' },
+                { text: 'Never tested for PFAS', score: 2, risk: 'high' },
+                { text: 'Tested and PFAS detected, no filtration yet', score: 2, risk: 'high' }
+              ],
+              education: {
+                title: 'PFAS — Forever Chemicals',
+                body: 'PFAS compounds have been manufactured since the 1940s for non-stick coatings (Teflon), water-resistant textiles (Gore-Tex), and firefighting foam. They NEVER break down in the environment. Health effects: liver damage, kidney damage, immune dysfunction, thyroid disease, cancer. Any detection warrants filtration.',
+                eiv: 'EIV: Eliminate exposure with filtration — ion exchange resins are most effective for full PFAS range.'
+              }
+            },
+            {
+              text: 'What type of water filtration do you use for drinking water?',
+              options: [
+                { text: 'Reverse osmosis or ion exchange system', score: 0, risk: 'low' },
+                { text: 'Activated carbon filter (Brita, fridge filter, etc.)', score: 1, risk: 'med' },
+                { text: 'No filtration — we drink tap water directly', score: 2, risk: 'high' },
+                { text: 'We use bottled water', score: 1, risk: 'med' }
+              ],
+              education: {
+                title: 'Water Filtration Effectiveness',
+                body: 'Granulated activated carbon (Brita, fridge filters) removes SOME contaminants but NOT all PFAS. Ion exchange resins and reverse osmosis are more effective for the full range. PFAS binds to serum albumin in blood, affecting nutrient and medication transport. AquaMetix/AquaComplete systems are recommended.',
+                eiv: 'EIV: Eliminate PFAS exposure with proper filtration at point of use.'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  // ================================================================
+  // STATE
+  // ================================================================
+  var STORAGE_KEY = 'he_assessment_v1';
+  var state = loadState();
+
+  function loadState() {
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return { answers: {}, concerns: {}, completed: {} };
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      showSaveIndicator('Saved');
+    } catch(e) {
+      showSaveIndicator('Save failed');
+    }
+  }
+
+  function showSaveIndicator(msg) {
+    var el = document.getElementById('saveIndicator');
+    if (el) { el.textContent = msg; setTimeout(function(){ el.textContent = ''; }, 1500); }
+  }
+
+  // ================================================================
+  // SCORING
+  // ================================================================
+  function getAreaScore(areaId) {
+    var area = AREAS.find(function(a){ return a.id === areaId; });
+    if (!area) return { score: 0, max: 0, pct: 0, answered: 0, total: 0 };
+    var totalQ = 0, answered = 0, score = 0, maxScore = 0;
+    area.subareas.forEach(function(sub) {
+      sub.questions.forEach(function(q, qi) {
+        totalQ++;
+        maxScore += 2;
+        var key = areaId + '.' + sub.id + '.' + qi;
+        if (state.answers[key] !== undefined) {
+          answered++;
+          score += (state.answers[key].score || 0);
+        }
+      });
+    });
+    return { score: score, max: maxScore, pct: maxScore > 0 ? Math.round((score / maxScore) * 100) : 0, answered: answered, total: totalQ };
+  }
+
+  function getHomeScore() {
+    var totalQ = 0, answered = 0, score = 0, maxScore = 0;
+    AREAS.forEach(function(area) {
+      var as = getAreaScore(area.id);
+      totalQ += as.total;
+      answered += as.answered;
+      score += as.score;
+      maxScore += as.max;
+    });
+    return { score: score, max: maxScore, pct: maxScore > 0 ? Math.round((score / maxScore) * 100) : 0, answered: answered, total: totalQ };
+  }
+
+  function riskLevel(pct) {
+    if (pct >= 60) return 'high';
+    if (pct >= 30) return 'med';
+    return 'low';
+  }
+
+  // ================================================================
+  // RENDER: Grid Screen
+  // ================================================================
+  function renderGrid() {
+    document.getElementById('gridScreen').style.display = '';
+    document.getElementById('assessScreen').style.display = 'none';
+    document.getElementById('resultsScreen').style.display = 'none';
+
+    var grid = document.getElementById('areaGrid');
+    grid.innerHTML = '';
+
+    var home = getHomeScore();
+    updateHomeProgress(home);
+
+    AREAS.forEach(function(area) {
+      var as = getAreaScore(area.id);
+      var card = document.createElement('div');
+      card.className = 'area-card';
+      if (as.answered === as.total && as.total > 0) card.className += ' complete';
+      else if (as.answered > 0) card.className += ' partial';
+
+      var statusText = 'Not started';
+      var statusClass = 'pending';
+      if (as.answered === as.total && as.total > 0) { statusText = 'Complete'; statusClass = 'complete'; }
+      else if (as.answered > 0) { statusText = as.answered + ' / ' + as.total + ' answered'; statusClass = 'partial'; }
+
+      card.innerHTML =
+        '<span class="card-icon">' + area.icon + '</span>' +
+        '<h4>' + area.title + '</h4>' +
+        '<div class="card-desc">' + area.desc + '</div>' +
+        '<div class="card-progress"><div class="card-progress-fill" style="width:' + (as.total > 0 ? Math.round((as.answered / as.total) * 100) : 0) + '%"></div></div>' +
+        '<div class="card-status ' + statusClass + '">' + statusText + '</div>';
+
+      card.onclick = function() { openArea(area.id); };
+      grid.appendChild(card);
+    });
+
+    // Show results button if all complete
+    if (home.answered === home.total && home.total > 0) {
+      var resultsBtn = document.createElement('div');
+      resultsBtn.style.cssText = 'text-align:center;margin-top:24px;';
+      resultsBtn.innerHTML = '<button class="nav-btn next" style="padding:16px 40px;font-size:1.1rem;" onclick="window._showResults()">View Your Results &rarr;</button>';
+      grid.parentNode.appendChild(resultsBtn);
+    }
+  }
+
+  function updateHomeProgress(home) {
+    var completedAreas = AREAS.filter(function(a) {
+      var as = getAreaScore(a.id);
+      return as.answered === as.total && as.total > 0;
+    }).length;
+
+    document.getElementById('homeBadge').textContent = completedAreas + ' / 15 Areas';
+    document.getElementById('homeProgressFill').style.width = (home.total > 0 ? Math.round((home.answered / home.total) * 100) : 0) + '%';
+    document.getElementById('homeProgressLabel').textContent = home.answered + ' of ' + home.total + ' questions answered';
+    document.getElementById('homeProgressPct').textContent = (home.total > 0 ? Math.round((home.answered / home.total) * 100) : 0) + '%';
+  }
+
+  // ================================================================
+  // RENDER: Assessment Screen
+  // ================================================================
+  var currentArea = null;
+  var currentSubIdx = 0;
+  var currentQIdx = 0;
+
+  function openArea(areaId) {
+    currentArea = AREAS.find(function(a){ return a.id === areaId; });
+    if (!currentArea) return;
+    currentSubIdx = 0;
+    currentQIdx = 0;
+    renderAssessment();
+  }
+
+  function renderAssessment() {
+    document.getElementById('gridScreen').style.display = 'none';
+    document.getElementById('assessScreen').style.display = '';
+    document.getElementById('resultsScreen').style.display = 'none';
+
+    var area = currentArea;
+    document.getElementById('areaTitle').textContent = area.icon + ' ' + area.title;
+    document.getElementById('areaDesc').textContent = area.desc;
+
+    // Sub-area nav pips
+    var nav = document.getElementById('subareaNav');
+    nav.innerHTML = '';
+    area.subareas.forEach(function(sub, si) {
+      var pip = document.createElement('span');
+      pip.className = 'subarea-pip';
+      if (si === currentSubIdx) pip.className += ' active';
+      // Check if all questions in this sub are answered
+      var allDone = sub.questions.every(function(q, qi) {
+        return state.answers[area.id + '.' + sub.id + '.' + qi] !== undefined;
+      });
+      if (allDone) pip.className += ' done';
+      pip.textContent = sub.label;
+      pip.onclick = function() { currentSubIdx = si; currentQIdx = 0; renderAssessment(); };
+      nav.appendChild(pip);
+    });
+
+    renderQuestion();
+    updateHomeProgress(getHomeScore());
+  }
+
+  function renderQuestion() {
+    var area = currentArea;
+    var sub = area.subareas[currentSubIdx];
+    var q = sub.questions[currentQIdx];
+    var key = area.id + '.' + sub.id + '.' + currentQIdx;
+
+    var body = document.getElementById('questionBody');
+    var html = '';
+
+    html += '<div class="q-label">' + sub.label + ' — Question ' + (currentQIdx + 1) + ' of ' + sub.questions.length + '</div>';
+    html += '<div class="q-text">' + q.text + '</div>';
+
+    html += '<div class="answer-options">';
+    q.options.forEach(function(opt, oi) {
+      var selected = state.answers[key] && state.answers[key].idx === oi;
+      var cls = 'answer-opt';
+      if (opt.risk === 'high') cls += ' risk-high';
+      else if (opt.risk === 'med') cls += ' risk-med';
+      if (selected) cls += ' selected';
+
+      html += '<div class="' + cls + '" data-idx="' + oi + '">' +
+        '<input type="radio" name="q" value="' + oi + '"' + (selected ? ' checked' : '') + '>' +
+        '<span class="opt-marker">' + String.fromCharCode(65 + oi) + '</span>' +
+        '<span class="opt-text">' + opt.text + '</span>' +
+        '</div>';
+    });
+    html += '</div>';
+
+    // Toxin education callout
+    var showEdu = state.answers[key] !== undefined;
+    html += '<div class="toxin-callout' + (showEdu ? ' visible' : '') + '" id="toxinCallout">' +
+      '<div class="tc-title">' + q.education.title + '</div>' +
+      '<div class="tc-body">' + q.education.body + '</div>' +
+      '<div class="tc-eiv">' + q.education.eiv + '</div>' +
+      '</div>';
+
+    // Custom concern
+    var concernVal = state.concerns[key] || '';
+    html += '<div class="custom-concern">' +
+      '<label>Add your own concern about this area:</label>' +
+      '<textarea id="concernInput" placeholder="Anything specific you\'ve noticed or want to flag...">' + concernVal + '</textarea>' +
+      '</div>';
+
+    body.innerHTML = html;
+
+    // Bind answer clicks
+    var opts = body.querySelectorAll('.answer-opt');
+    opts.forEach(function(el) {
+      el.addEventListener('click', function() {
+        var idx = parseInt(el.getAttribute('data-idx'));
+        var opt = q.options[idx];
+        state.answers[key] = { idx: idx, score: opt.score, risk: opt.risk };
+        saveState();
+        renderQuestion();
+      });
+    });
+
+    // Bind concern input
+    var concernEl = document.getElementById('concernInput');
+    if (concernEl) {
+      concernEl.addEventListener('input', function() {
+        state.concerns[key] = concernEl.value;
+        saveState();
+      });
+    }
+
+    // Nav buttons
+    var prevBtn = document.getElementById('prevBtn');
+    var nextBtn = document.getElementById('nextBtn');
+    prevBtn.disabled = (currentSubIdx === 0 && currentQIdx === 0);
+
+    // Determine if this is the last question in the area
+    var isLastSub = currentSubIdx === area.subareas.length - 1;
+    var isLastQ = currentQIdx === sub.questions.length - 1;
+    if (isLastSub && isLastQ) {
+      nextBtn.textContent = 'Finish Area →';
+    } else {
+      nextBtn.textContent = 'Next →';
+    }
+  }
+
+  // Navigation
+  document.getElementById('nextBtn').addEventListener('click', function() {
+    var area = currentArea;
+    var sub = area.subareas[currentSubIdx];
+    if (currentQIdx < sub.questions.length - 1) {
+      currentQIdx++;
+    } else if (currentSubIdx < area.subareas.length - 1) {
+      currentSubIdx++;
+      currentQIdx = 0;
+    } else {
+      renderGrid();
+      return;
+    }
+    renderAssessment();
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', function() {
+    var area = currentArea;
+    if (currentQIdx > 0) {
+      currentQIdx--;
+    } else if (currentSubIdx > 0) {
+      currentSubIdx--;
+      var prevSub = area.subareas[currentSubIdx];
+      currentQIdx = prevSub.questions.length - 1;
+    }
+    renderAssessment();
+  });
+
+  document.getElementById('backBtn').addEventListener('click', function() {
+    renderGrid();
+  });
+
+  // ================================================================
+  // REMEDIATION DATA — Cost estimates from book case studies
+  // ================================================================
+  var REMEDIATION = {
+    attic: {
+      high: { action: 'Professional attic mold remediation + ventilation repair', cost: '$3,000 – $12,000', timeline: '1–2 weeks', diy: 'Unblock soffit vents, check for roof leak staining' },
+      med: { action: 'Attic inspection + ventilation assessment', cost: '$300 – $800', timeline: '1 day', diy: 'Visually inspect attic for staining, check vent airflow' }
+    },
+    roof: {
+      high: { action: 'Roof repair/replacement + gutter system', cost: '$5,000 – $25,000', timeline: '1–5 days', diy: 'Clean gutters, extend downspouts 4+ feet from foundation' },
+      med: { action: 'Roof inspection + flashing/sealant repair', cost: '$200 – $600', timeline: '1 day', diy: 'Visual inspection from ground, clean gutters' }
+    },
+    walls: {
+      high: { action: 'Building envelope investigation + mold remediation if found', cost: '$2,000 – $15,000', timeline: '1–4 weeks', diy: 'Re-caulk windows/doors, seal visible gaps' },
+      med: { action: 'Exterior caulk and sealant maintenance', cost: '$200 – $500', timeline: '1 day', diy: 'Inspect and re-caulk all window/door/siding junctions' }
+    },
+    foundation: {
+      high: { action: 'Foundation waterproofing + vapor barrier + dehumidification', cost: '$5,000 – $18,500', timeline: '1–3 weeks', diy: 'Monitor humidity, check sump pump function' },
+      med: { action: 'Crawl space vapor barrier + moisture assessment', cost: '$1,500 – $4,000', timeline: '2–3 days', diy: 'Check for standing water, inspect existing barriers' }
+    },
+    basement: {
+      high: { action: 'Mold remediation + radon mitigation + dehumidification', cost: '$4,000 – $18,500', timeline: '1–3 weeks', diy: 'Get radon test kit ($15), run dehumidifier, improve ventilation' },
+      med: { action: 'Radon testing + moisture monitoring', cost: '$150 – $500', timeline: '2–7 days for test', diy: 'Purchase radon test, monitor humidity with hygrometer' }
+    },
+    hvac: {
+      high: { action: 'HVAC inspection + duct cleaning + filter upgrade + CO testing', cost: '$500 – $2,000', timeline: '1 day', diy: 'Replace filter with MERV 11-13, install CO detectors on every level' },
+      med: { action: 'Filter upgrade + duct cleaning', cost: '$300 – $800', timeline: '1 day', diy: 'Upgrade to MERV 11-13 filter, change every 1-3 months' }
+    },
+    kitchen: {
+      high: { action: 'Formaldehyde testing + cabinet sealing/replacement + venting', cost: '$500 – $5,000', timeline: '1 day – 2 weeks', diy: 'Seal cabinets with polyurethane/shellac, ensure hood vents outdoors' },
+      med: { action: 'Ventilation check + cabinet sealing', cost: '$100 – $400', timeline: '1 day', diy: 'Verify range hood vents outside, open windows when cooking' }
+    },
+    bathroom: {
+      high: { action: 'Mold remediation + exhaust fan install/repair', cost: '$500 – $3,000', timeline: '1–3 days', diy: 'Run fan 30 min after showers, clean visible mold with H2O2' },
+      med: { action: 'Exhaust fan maintenance + caulk replacement', cost: '$50 – $200', timeline: '1 day', diy: 'Replace caulk, run fan longer, squeegee after showers' }
+    },
+    bedroom: {
+      high: { action: 'Air quality testing + HEPA purifier + allergen mitigation', cost: '$300 – $1,000', timeline: '1–3 days', diy: 'Allergen-proof encasements, HEPA purifier, wash bedding weekly in hot water' },
+      med: { action: 'Allergen covers + ventilation improvement', cost: '$100 – $300', timeline: '1 day', diy: 'Add allergen-proof covers, crack door/window at night for airflow' }
+    },
+    living: {
+      high: { action: 'Carpet removal + VOC testing + air purification', cost: '$1,000 – $8,000', timeline: '1–5 days', diy: 'Remove fragrance products immediately, open windows daily for ventilation' },
+      med: { action: 'Fragrance product elimination + ventilation', cost: '$50 – $300', timeline: 'Immediate', diy: 'Stop using air fresheners/candles, ventilate daily' }
+    },
+    laundry: {
+      high: { action: 'Dryer venting repair + moisture damage remediation', cost: '$200 – $2,000', timeline: '1–3 days', diy: 'Check dryer vent path, clean lint from duct, inspect behind machines' },
+      med: { action: 'Dryer vent cleaning + inspection', cost: '$100 – $200', timeline: '1 day', diy: 'Clean dryer vent annually, check for moisture behind machines' }
+    },
+    nursery: {
+      high: { action: 'VOC testing + air purifier + material replacement', cost: '$300 – $2,000', timeline: '1–5 days', diy: 'HEPA+carbon purifier, remove humidifiers, ventilate heavily' },
+      med: { action: 'Air purifier + ventilation improvement', cost: '$150 – $500', timeline: '1 day', diy: 'Add HEPA purifier, ensure adequate ventilation' }
+    },
+    garage: {
+      high: { action: 'Air sealing between garage and living space + chemical storage audit', cost: '$300 – $1,500', timeline: '1–2 days', diy: 'Weather-strip door to house, seal wall penetrations, relocate chemicals' },
+      med: { action: 'Door seal replacement + chemical organization', cost: '$50 – $200', timeline: '1 day', diy: 'Replace weather stripping, seal containers, remove unnecessary chemicals' }
+    },
+    yard: {
+      high: { action: 'Grading correction + drainage improvement', cost: '$1,000 – $5,000', timeline: '1–3 days', diy: 'Shoes-off policy, stop lawn chemicals, check grading with level' },
+      med: { action: 'Grading assessment + contaminant reduction', cost: '$200 – $500', timeline: '1 day', diy: 'Implement shoes-off policy, reduce lawn chemical use' }
+    },
+    water: {
+      high: { action: 'Water testing (PFAS + metals) + filtration system install', cost: '$500 – $3,000', timeline: '1–5 days', diy: 'Order PFAS water test, consider reverse osmosis for drinking water' },
+      med: { action: 'Water testing + filter upgrade', cost: '$100 – $500', timeline: '2–5 days', diy: 'Test water quality, upgrade from carbon to RO or ion exchange' }
+    }
+  };
+
+  // ================================================================
+  // RENDER: Results Screen
+  // ================================================================
+  window._showResults = function() {
+    document.getElementById('gridScreen').style.display = 'none';
+    document.getElementById('assessScreen').style.display = 'none';
+    document.getElementById('resultsScreen').style.display = '';
+
+    var home = getHomeScore();
+    var overallRisk = riskLevel(home.pct);
+
+    var riskLabel = overallRisk === 'high' ? 'High Risk' : overallRisk === 'med' ? 'Moderate Risk' : 'Low Risk';
+    var riskColor = overallRisk === 'high' ? 'var(--red-soft)' : overallRisk === 'med' ? 'var(--orange-soft)' : 'var(--green-spring)';
+
+    var html = '';
+
+    // Report header
+    html += '<div class="results-header">' +
+      '<h2>Your Home Assessment Report</h2>' +
+      '<p>Healthy Exposure — Eliminate, Isolate, Ventilate</p>' +
+      '<div class="score-ring" style="border-color:' + riskColor + '">' +
+        '<span class="score-val">' + home.pct + '%</span>' +
+        '<span class="score-label">' + riskLabel + '</span>' +
+      '</div>' +
+      '<p style="font-size:0.85rem;opacity:0.8;margin-top:10px;">' + home.answered + ' questions answered across 15 areas</p>' +
+      '<p style="font-size:0.78rem;opacity:0.6;margin-top:4px;">Generated ' + new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) + '</p>' +
+      '</div>';
+
+    // Sort areas by risk (highest first)
+    var areaResults = AREAS.map(function(area) {
+      return { area: area, score: getAreaScore(area.id) };
+    }).sort(function(a, b) { return b.score.pct - a.score.pct; });
+
+    // Priority Action Plan (high-risk areas first)
+    var highRisk = areaResults.filter(function(ar) { return riskLevel(ar.score.pct) === 'high'; });
+    var medRisk = areaResults.filter(function(ar) { return riskLevel(ar.score.pct) === 'med'; });
+    var totalEstMin = 0, totalEstMax = 0;
+
+    if (highRisk.length > 0 || medRisk.length > 0) {
+      html += '<div style="background:var(--white-soft);border:2px solid var(--red-soft);border-radius:12px;padding:24px;margin-bottom:24px;">';
+      html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:1.4rem;color:var(--red-soft);margin-bottom:4px;">Prioritized Remediation Plan</h3>';
+      html += '<p style="font-size:0.85rem;color:var(--brown-warm);margin-bottom:16px;">Based on the EIV method — address highest-risk areas first. Costs are estimates from documented case studies.</p>';
+
+      var priority = 1;
+      var allPriority = highRisk.concat(medRisk);
+      allPriority.forEach(function(ar) {
+        var risk = riskLevel(ar.score.pct);
+        var rem = REMEDIATION[ar.area.id] && REMEDIATION[ar.area.id][risk];
+        if (!rem) return;
+
+        var costParts = rem.cost.replace(/\$/g,'').replace(/,/g,'').split('–').map(function(s){ return parseInt(s.trim()); });
+        if (costParts.length === 2) { totalEstMin += costParts[0]; totalEstMax += costParts[1]; }
+
+        var urgencyColor = risk === 'high' ? 'var(--red-soft)' : 'var(--orange-soft)';
+        var urgencyLabel = risk === 'high' ? 'URGENT' : 'MODERATE';
+
+        html += '<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--cream-dark);">';
+        html += '<div style="min-width:36px;height:36px;border-radius:50%;background:' + urgencyColor + ';color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0;">' + priority + '</div>';
+        html += '<div style="flex:1;">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">';
+        html += '<strong style="color:var(--forest);">' + ar.area.icon + ' ' + ar.area.title + '</strong>';
+        html += '<span style="font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:10px;background:' + (risk === 'high' ? '#fde8e8' : '#fef3e0') + ';color:' + urgencyColor + ';">' + urgencyLabel + '</span>';
+        html += '</div>';
+        html += '<div style="font-size:0.88rem;color:var(--brown-deep);margin-top:4px;">' + rem.action + '</div>';
+        html += '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;font-size:0.8rem;color:var(--brown-warm);">';
+        html += '<span>Est. cost: <strong>' + rem.cost + '</strong></span>';
+        html += '<span>Timeline: <strong>' + rem.timeline + '</strong></span>';
+        html += '</div>';
+        html += '<div style="font-size:0.8rem;color:var(--green-spring);margin-top:4px;font-weight:600;">DIY first step: ' + rem.diy + '</div>';
+        html += '</div></div>';
+        priority++;
+      });
+
+      // Total cost estimate
+      if (totalEstMax > 0) {
+        html += '<div style="margin-top:16px;padding:14px;background:var(--cream-dark);border-radius:8px;text-align:center;">';
+        html += '<div style="font-size:0.82rem;color:var(--brown-warm);text-transform:uppercase;font-weight:700;">Estimated Total Remediation Range</div>';
+        html += '<div style="font-size:1.6rem;font-weight:700;color:var(--forest);font-family:Cormorant Garamond,serif;">$' + totalEstMin.toLocaleString() + ' – $' + totalEstMax.toLocaleString() + '</div>';
+        html += '<div style="font-size:0.78rem;color:var(--brown-warm);margin-top:4px;">Based on documented case studies. Actual costs vary by region and scope.</div>';
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    // Area-by-area detailed findings
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:1.4rem;color:var(--forest);margin-bottom:16px;">Area-by-Area Findings</h3>';
+
+    areaResults.forEach(function(ar) {
+      var risk = riskLevel(ar.score.pct);
+      var riskText = risk === 'high' ? 'High Risk' : risk === 'med' ? 'Moderate' : 'Low Risk';
+      var scoreClass = risk;
+
+      // Gather findings and education
+      var findings = [];
+      var educationItems = [];
+      ar.area.subareas.forEach(function(sub) {
+        sub.questions.forEach(function(q, qi) {
+          var key = ar.area.id + '.' + sub.id + '.' + qi;
+          var ans = state.answers[key];
+          if (ans && ans.risk !== 'low') {
+            findings.push(q.options[ans.idx].text);
+            educationItems.push({ title: q.education.title, eiv: q.education.eiv });
+          }
+          if (state.concerns[key]) {
+            findings.push('Your note: ' + state.concerns[key]);
+          }
+        });
+      });
+
+      html += '<div class="area-result risk-' + risk + '">' +
+        '<div class="ar-header">' +
+          '<h4>' + ar.area.icon + ' ' + ar.area.title + '</h4>' +
+          '<span class="ar-score ' + scoreClass + '">' + riskText + '</span>' +
+        '</div>';
+
+      if (findings.length > 0) {
+        html += '<div class="ar-findings"><ul style="margin:0;padding-left:18px;">';
+        findings.forEach(function(f) {
+          html += '<li style="margin-bottom:4px;">' + f + '</li>';
+        });
+        html += '</ul></div>';
+
+        // EIV recommendations for flagged items
+        if (educationItems.length > 0) {
+          html += '<div style="margin-top:10px;padding:10px 14px;background:#f0f7f0;border-radius:6px;font-size:0.82rem;">';
+          html += '<strong style="color:var(--green-spring);">EIV Recommendations:</strong>';
+          var seen = {};
+          educationItems.forEach(function(ei) {
+            if (!seen[ei.eiv]) {
+              html += '<div style="color:var(--brown-deep);margin-top:3px;">' + ei.eiv + '</div>';
+              seen[ei.eiv] = true;
+            }
+          });
+          html += '</div>';
+        }
+      } else {
+        html += '<div class="ar-findings" style="color:var(--green-spring);">No concerns identified — this area looks good.</div>';
+      }
+
+      // Remediation details for non-low areas
+      var rem = REMEDIATION[ar.area.id] && REMEDIATION[ar.area.id][risk];
+      if (rem && risk !== 'low') {
+        html += '<div class="ar-action" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">';
+        html += '<span>' + (risk === 'high' ? '⚠️' : '🔍') + ' ' + rem.action + '</span>';
+        html += '<span style="font-size:0.78rem;color:var(--brown-warm);">(' + rem.cost + ', ' + rem.timeline + ')</span>';
+        html += '</div>';
+      }
+
+      html += '</div>';
+    });
+
+    // Supplement Recommendations (based on detected exposures)
+    var detectedExposures = {};
+    AREAS.forEach(function(area) {
+      area.subareas.forEach(function(sub) {
+        sub.questions.forEach(function(q, qi) {
+          var key = area.id + '.' + sub.id + '.' + qi;
+          var ans = state.answers[key];
+          if (ans && ans.risk !== 'low') {
+            // Tag exposure types based on area
+            if (['attic','walls','foundation','basement','bathroom','laundry'].indexOf(area.id) >= 0) detectedExposures.mold = true;
+            if (['kitchen','living','nursery','bedroom'].indexOf(area.id) >= 0) detectedExposures.voc = true;
+            if (area.id === 'water') detectedExposures.pfas = true;
+            if (area.id === 'hvac') detectedExposures.airquality = true;
+            if (area.id === 'garage') detectedExposures.chemical = true;
+            if (area.id === 'bedroom') detectedExposures.allergens = true;
+          }
+        });
+      });
+    });
+
+    var SUPPLEMENTS = [
+      { exposure: 'mold', title: 'Mold / Mycotoxin Exposure Support', items: [
+        { name: 'Activated Charcoal (Binder)', why: 'Binds mycotoxins in the gut to prevent recirculation', research: 'Used in CIRS treatment protocols (Shoemaker)' },
+        { name: 'Glutathione (Liposomal)', why: 'Master antioxidant — supports detoxification pathways overloaded by mold exposure', research: 'Published role in oxidative stress reduction and liver detox' },
+        { name: 'NAC (N-Acetyl Cysteine)', why: 'Precursor to glutathione; supports respiratory and liver function', research: 'Studied for mucolytic and antioxidant properties' },
+        { name: 'Saccharomyces Boulardii (Probiotic)', why: 'Supports gut barrier integrity disrupted by mycotoxins', research: 'Evidence for gut restoration post-toxic exposure' }
+      ]},
+      { exposure: 'voc', title: 'VOC / Formaldehyde Exposure Support', items: [
+        { name: 'Milk Thistle (Silymarin)', why: 'Liver protection from chemical burden — supports Phase I/II detox', research: 'Established hepatoprotective compound in toxicology literature' },
+        { name: 'Vitamin C (Buffered)', why: 'Antioxidant protection against free radicals generated by chemical exposure', research: 'Documented role in reducing oxidative damage from environmental toxins' },
+        { name: 'B-Complex Vitamins', why: 'Supports methylation and liver detox pathways — often depleted by chemical exposure', research: 'Critical cofactors in Phase I and Phase II liver detoxification' }
+      ]},
+      { exposure: 'pfas', title: 'PFAS / Water Contamination Support', items: [
+        { name: 'Cholestyramine (Rx) or Chlorella', why: 'Bile acid binders that may help reduce PFAS body burden over time', research: 'Cholestyramine studied in PFAS exposure; chlorella studied as heavy metal binder' },
+        { name: 'Omega-3 Fatty Acids', why: 'Anti-inflammatory support for liver and kidney function affected by PFAS', research: 'Published anti-inflammatory mechanisms relevant to PFAS-induced damage' },
+        { name: 'Liver Support Complex', why: 'PFAS accumulates in the liver — support detox capacity', research: 'PFAS liver toxicity well-documented in epidemiological studies' }
+      ]},
+      { exposure: 'airquality', title: 'Air Quality / Respiratory Support', items: [
+        { name: 'Quercetin', why: 'Natural antihistamine and anti-inflammatory — reduces respiratory inflammation', research: 'Published mast cell stabilization and anti-inflammatory effects' },
+        { name: 'Vitamin D3 + K2', why: 'Immune modulation — deficiency common in those with chronic inflammation', research: 'Well-established immune regulatory role' },
+        { name: 'Magnesium Glycinate', why: 'Supports bronchial smooth muscle relaxation and sleep quality', research: 'Studied for bronchodilator effects and sleep improvement' }
+      ]},
+      { exposure: 'allergens', title: 'Allergen / Dust Mite Support', items: [
+        { name: 'Quercetin + Bromelain', why: 'Natural antihistamine combo — reduces allergic response without drowsiness', research: 'Quercetin as mast cell stabilizer; bromelain enhances absorption' },
+        { name: 'Stinging Nettle Extract', why: 'Traditional anti-allergy herb with published histamine-reducing properties', research: 'Clinical studies on allergic rhinitis symptom reduction' }
+      ]},
+      { exposure: 'chemical', title: 'Chemical Exposure / Total Body Burden', items: [
+        { name: 'Glutathione (Liposomal)', why: 'Primary detox antioxidant — depleted by cumulative chemical exposure', research: 'Central role in xenobiotic detoxification pathways' },
+        { name: 'Alpha Lipoic Acid', why: 'Regenerates other antioxidants (C, E, glutathione); chelates some heavy metals', research: 'Published as "universal antioxidant" in toxicology' },
+        { name: 'Fiber (Psyllium or Flax)', why: 'Supports elimination of toxins through bile and stool', research: 'Fiber enhances fecal excretion of lipophilic toxins' }
+      ]}
+    ];
+
+    var relevantSupps = SUPPLEMENTS.filter(function(s) { return detectedExposures[s.exposure]; });
+    if (relevantSupps.length > 0) {
+      html += '<div style="background:var(--white-soft);border:2px solid var(--gold-accent);border-radius:12px;padding:24px;margin:24px 0;">';
+      html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:1.4rem;color:var(--forest);margin-bottom:4px;">Supplement Recommendations</h3>';
+      html += '<p style="font-size:0.85rem;color:var(--brown-warm);margin-bottom:16px;">Based on your identified exposures. Each recommendation is linked to published research. Always consult your healthcare provider before starting any supplement.</p>';
+
+      relevantSupps.forEach(function(cat) {
+        html += '<div style="margin-bottom:20px;">';
+        html += '<h4 style="font-family:Cormorant Garamond,serif;font-size:1.1rem;color:var(--gold-accent);margin-bottom:8px;">' + cat.title + '</h4>';
+        cat.items.forEach(function(item) {
+          html += '<div style="padding:10px 14px;border-left:3px solid var(--green-spring);margin-bottom:8px;background:var(--cream);">';
+          html += '<strong style="font-size:0.9rem;color:var(--forest);">' + item.name + '</strong>';
+          html += '<div style="font-size:0.82rem;color:var(--brown-deep);margin-top:2px;">' + item.why + '</div>';
+          html += '<div style="font-size:0.75rem;color:var(--brown-warm);margin-top:2px;font-style:italic;">Research basis: ' + item.research + '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      });
+
+      html += '<div style="background:var(--cream-dark);padding:12px 16px;border-radius:8px;font-size:0.78rem;color:var(--brown-warm);line-height:1.5;">';
+      html += '<strong>Educational Disclaimer:</strong> These supplement recommendations are for educational purposes only, based on published research. They do not constitute medical advice. Healthy Exposure does not diagnose, treat, or prescribe. Consult a qualified healthcare provider before starting any supplement protocol. Individual results vary. Healthy Exposure assumes no liability for supplement use.';
+      html += '</div>';
+      html += '</div>';
+    }
+
+    // Four Pillars summary
+    html += '<div style="background:linear-gradient(135deg,var(--forest),var(--green-dark));color:white;border-radius:12px;padding:24px;margin:24px 0;text-align:center;">';
+    html += '<h3 style="font-size:1.4rem;margin-bottom:12px;">The Four Pillars of Environmental Health</h3>';
+    html += '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">';
+    ['Pure Air — Contaminant-free, ventilated, filtered',
+     'Pure Water — Tested, filtered, maintained',
+     'Safe Materials — Low-VOC, formaldehyde-free',
+     'Sensible Design — Proper moisture management'].forEach(function(p) {
+      html += '<div style="background:rgba(255,255,255,0.15);padding:12px 16px;border-radius:8px;font-size:0.85rem;flex:1;min-width:140px;">' + p + '</div>';
+    });
+    html += '</div>';
+    html += '<p style="font-size:0.82rem;opacity:0.75;margin-top:12px;">From "Environmental Health by Healthy Exposure" by Capt. Darren J. Vigil, CIEC, ATP</p>';
+    html += '</div>';
+
+    // Next Steps — Funnel CTAs
+    html += '<div style="background:var(--white-soft);border:2px solid var(--forest);border-radius:12px;padding:24px;margin:24px 0;">';
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:1.4rem;color:var(--forest);margin-bottom:12px;text-align:center;">Your Next Steps</h3>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;">';
+
+    html += '<div style="padding:16px;background:var(--cream);border-radius:8px;text-align:center;">';
+    html += '<div style="font-size:1.5rem;margin-bottom:6px;">📖</div>';
+    html += '<strong style="font-size:0.9rem;color:var(--forest);">Get the Book</strong>';
+    html += '<div style="font-size:0.8rem;color:var(--brown-warm);margin:6px 0 10px;">Understand the science behind every finding in your report.</div>';
+    html += '<a href="#" style="display:inline-block;background:var(--forest);color:white;padding:8px 18px;border-radius:6px;font-size:0.82rem;font-weight:700;text-decoration:none;">$27 Paperback</a>';
+    html += '</div>';
+
+    html += '<div style="padding:16px;background:var(--cream);border-radius:8px;text-align:center;">';
+    html += '<div style="font-size:1.5rem;margin-bottom:6px;">🩺</div>';
+    html += '<strong style="font-size:0.9rem;color:var(--forest);">Virtual Consultation</strong>';
+    html += '<div style="font-size:0.8rem;color:var(--brown-warm);margin:6px 0 10px;">Review your results with a health consultant and get a personalized plan.</div>';
+    html += '<a href="#" style="display:inline-block;background:var(--gold-accent);color:var(--brown-deep);padding:8px 18px;border-radius:6px;font-size:0.82rem;font-weight:700;text-decoration:none;">Book — $497</a>';
+    html += '</div>';
+
+    html += '<div style="padding:16px;background:var(--cream);border-radius:8px;text-align:center;">';
+    html += '<div style="font-size:1.5rem;margin-bottom:6px;">🔬</div>';
+    html += '<strong style="font-size:0.9rem;color:var(--forest);">Professional Assessment</strong>';
+    html += '<div style="font-size:0.8rem;color:var(--brown-warm);margin:6px 0 10px;">Full-service environmental testing and remediation by a CIEC consultant.</div>';
+    html += '<a href="#" style="display:inline-block;background:var(--forest);color:white;padding:8px 18px;border-radius:6px;font-size:0.82rem;font-weight:700;text-decoration:none;">From $10,000</a>';
+    html += '</div>';
+
+    html += '</div></div>';
+
+    // Disclaimer
+    html += '<div class="disclaimer">' +
+      '<strong>Disclaimer:</strong> This assessment is for educational purposes only and does not constitute medical advice, environmental testing, or professional inspection. ' +
+      'Results are based on self-reported observations and may not reflect actual environmental conditions. Cost estimates are derived from documented case studies and vary by region, scope, and contractor. ' +
+      'For accurate testing and remediation, contact a certified environmental consultant. Healthy Exposure assumes no liability for actions taken based on this assessment.' +
+      '</div>';
+
+    // Action buttons
+    html += '<div class="results-actions">' +
+      '<button class="action-btn primary" onclick="window._exportPDF()">Download PDF Report</button>' +
+      '<button class="action-btn secondary" onclick="window._emailResults()">Email to Healthy Exposure</button>' +
+      '<button class="action-btn secondary" onclick="window._resetAssessment()">Start Over</button>' +
+      '</div>';
+
+    html += '<div style="text-align:center;margin:20px 0;">' +
+      '<a href="index.html" style="color:var(--green-spring);font-weight:700;font-size:0.9rem;text-decoration:none;">&larr; Back to Healthy Exposure Home</a>' +
+      '</div>';
+
+    document.getElementById('resultsScreen').innerHTML = html;
+  };
+
+  window._backToGrid = function() { renderGrid(); };
+
+  // ================================================================
+  // PDF EXPORT (browser print)
+  // ================================================================
+  window._exportPDF = function() {
+    window.print();
+  };
+
+  // ================================================================
+  // EMAIL RESULTS
+  // ================================================================
+  window._emailResults = function() {
+    var home = getHomeScore();
+    var subject = encodeURIComponent('Home Assessment Results — ' + Math.round(home.pct) + '% Risk Score');
+    var body = encodeURIComponent('I completed the Healthy Exposure Digital Home Assessment.\n\nOverall Risk Score: ' + home.pct + '%\nQuestions Answered: ' + home.answered + ' / ' + home.total + '\n\nI would like to schedule a consultation to discuss my results.\n\nThank you.');
+    window.open('mailto:info@healthyexposure.com?subject=' + subject + '&body=' + body);
+  };
+
+  // ================================================================
+  // RESET
+  // ================================================================
+  window._resetAssessment = function() {
+    if (confirm('This will clear all your answers. Are you sure?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      state = { answers: {}, concerns: {}, completed: {} };
+      renderGrid();
+    }
+  };
+
+  // ================================================================
+  // INIT
+  // ================================================================
+  renderGrid();
+
+})();
+</script>
+
+</body>
+</html>
