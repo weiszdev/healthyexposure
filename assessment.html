@@ -1233,7 +1233,7 @@
   // RENDER: Grid Screen
   // ================================================================
   function renderGrid() {
-    document.getElementById('gridScreen').style.display = '';
+    document.getElementById('gridScreen').style.display = 'block';
     document.getElementById('assessScreen').style.display = 'none';
     document.getElementById('resultsScreen').style.display = 'none';
 
@@ -1304,7 +1304,7 @@
 
   function renderAssessment() {
     document.getElementById('gridScreen').style.display = 'none';
-    document.getElementById('assessScreen').style.display = '';
+    document.getElementById('assessScreen').style.display = 'block';
     document.getElementById('resultsScreen').style.display = 'none';
 
     var area = currentArea;
@@ -1517,7 +1517,7 @@
   window._showResults = function() {
     document.getElementById('gridScreen').style.display = 'none';
     document.getElementById('assessScreen').style.display = 'none';
-    document.getElementById('resultsScreen').style.display = '';
+    document.getElementById('resultsScreen').style.display = 'block';
 
     var home = getHomeScore();
     var overallRisk = riskLevel(home.pct);
