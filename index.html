@@ -483,12 +483,10 @@
       <div class="badge">Free Download</div>
       <h3>"Is Your Home Making You Sick?"</h3>
       <p>A 12-page guide covering the 5 most common hidden toxins in your home, what symptoms they cause, and what to do about each one. Written by Capt. Darren J. Vigil, CIEC, ATP.</p>
-      <form class="email-form" id="emailForm" action="https://formspree.io/f/xyzgobkl" method="POST" onsubmit="return handleEmailSubmit(event)">
-        <input type="email" class="email-input" id="emailInput" name="email" placeholder="Your email address" required>
-        <input type="hidden" name="_subject" value="New Healthy Exposure Lead — Free Guide Download">
-        <input type="hidden" name="source" value="free-guide-landing">
-        <button type="submit" class="email-submit" id="emailSubmit">Send My Free Guide</button>
-      </form>
+      <div class="email-form" id="emailForm">
+        <input type="email" class="email-input" id="emailInput" placeholder="Your email address" required>
+        <button class="email-submit" id="emailSubmit" onclick="handleEmailSubmit()">Send My Free Guide</button>
+      </div>
       <div id="formFeedback" class="form-note">No spam. Unsubscribe anytime. Your data stays private.</div>
     </div>
   </section>
@@ -791,10 +789,9 @@
   'use strict';
 
   var STORAGE_KEY = 'he_leads_v1';
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3OPCdm9YB_SWzPLwpShl2gMFuFuqq-CKcqc48eS9FNCBR5Ya4jPv_zwNNF1SvpRsQSQ/exec';
 
-  window.handleEmailSubmit = function(e) {
-    e.preventDefault();
-
+  window.handleEmailSubmit = function() {
     var input = document.getElementById('emailInput');
     var btn = document.getElementById('emailSubmit');
     var feedback = document.getElementById('formFeedback');
@@ -806,7 +803,7 @@
       input.style.borderColor = 'var(--red-soft)';
       feedback.textContent = 'Please enter a valid email address.';
       feedback.style.color = 'var(--red-soft)';
-      return false;
+      return;
     }
 
     // Disable button, show sending state
@@ -821,30 +818,26 @@
     leads.push({ email: email, date: new Date().toISOString(), source: 'free-guide' });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
 
-    // Submit to Formspree
-    var form = document.getElementById('emailForm');
-    var data = new FormData(form);
+    // Submit to Google Apps Script
+    var payload = {
+      type: 'lead',
+      email: email,
+      source: 'free-guide-landing',
+      date: new Date().toISOString()
+    };
 
-    fetch(form.action, {
+    fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      body: data,
-      headers: { 'Accept': 'application/json' }
-    }).then(function(response) {
-      if (response.ok) {
-        // Show success modal
-        document.getElementById('successModal').classList.add('show');
-        input.value = '';
-        input.style.borderColor = '';
-        feedback.textContent = 'Guide sent! Check your inbox.';
-        feedback.style.color = 'var(--green-spring)';
-      } else {
-        // Formspree not configured yet — still show success (lead saved locally)
-        document.getElementById('successModal').classList.add('show');
-        input.value = '';
-        input.style.borderColor = '';
-        feedback.textContent = 'Registered! We\'ll be in touch.';
-        feedback.style.color = 'var(--green-spring)';
-      }
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function() {
+      // Show success modal (no-cors means we can't read response, but it sent)
+      document.getElementById('successModal').classList.add('show');
+      input.value = '';
+      input.style.borderColor = '';
+      feedback.textContent = 'Guide sent! Check your inbox.';
+      feedback.style.color = 'var(--green-spring)';
     }).catch(function() {
       // Network error — still show success since lead saved locally
       document.getElementById('successModal').classList.add('show');
@@ -855,9 +848,12 @@
       btn.disabled = false;
       btn.textContent = 'Send My Free Guide';
     });
-
-    return false;
   };
+
+  // Allow enter key on email input
+  document.getElementById('emailInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); handleEmailSubmit(); }
+  });
 
   // Smooth scroll for anchor links
   document.querySelectorAll('a[href^="#"]').forEach(function(a) {
